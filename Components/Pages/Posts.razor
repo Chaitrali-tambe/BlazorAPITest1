@@ -1,0 +1,93 @@
+﻿@page "/posts"
+@using System.Net.Http.Json
+@using System.Text.Json
+@inject IHttpClientFactory ClientFactory
+@inject HttpClient Http
+@using Microsoft.AspNetCore.Components.Sections
+@using Model
+@using System.Linq
+
+<style>
+    body{
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+</style>
+
+<SectionContent SectionName="PageHeading">
+    <h2 class="m-0">News Feed</h2>
+</SectionContent>
+
+<div class="d-flex flex-column align-items-center justify-content-center">
+    @if (isLoading)
+    {
+        @* <p><em>Loading...</em></p> *@
+        @* <svg class="spinner" width="65px" height="65px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+        <circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+    </svg> *@
+        @* <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Loading...</span>
+    </div> *@
+       @*  <div class="spinner-container">
+            <svg class="spinner" width="65px" height="65px" viewBox="0 0 66 66">
+                <circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+            </svg>
+        </div> *@
+        <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    }
+    else
+    {
+        foreach (var postobj in post)
+        {
+            var currentUser = user.FirstOrDefault(u => u.id == postobj.userId);
+            var name = currentUser?.name ?? "Unknown User";
+            var username = currentUser?.username ?? "unknown";
+            var userId = currentUser?.id;
+            var postid = @postobj.id;
+            <div class="card w-75" style="margin: 2% 0;">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <a class="text-decoration-none fw-bold text-secondary" href="/profile/@userId">@name</a>
+                    </h6>
+                    <p class="text-secondary text-opacity-50">
+                        @@@username
+                    </p>
+                    <h5 class="card-subtitle mb-2 text-muted">@postobj.title</h5>
+                    <p class="card-text">@postobj.body</p>
+                    <a href="#" class="btn btn-primary me-2 disabled">Like</a>
+                    <a href="#" class="btn btn-danger me-2 disabled">Unlike</a>
+                    <a href="/posts/@postid" class="btn btn-secondary me-2">Comments</a>
+                    <a href="#" class="card-link">Report</a>
+                </div>
+            </div>
+        }
+
+    }
+
+</div>
+
+
+@code {
+    private Post[]? post;
+    private Users[]? user;
+    private bool isLoading = true;
+    protected override async Task OnInitializedAsync()
+    {
+
+        await Task.Yield();
+
+        var client = ClientFactory.CreateClient("JSONPlaceholder");
+
+        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        var postsTask = client.GetFromJsonAsync<Post[]>("/posts", options);
+        var usersTask = client.GetFromJsonAsync<Users[]>("/users", options);
+       // var delayTask = Task.Delay(3000);
+        await Task.WhenAll(postsTask, usersTask);
+        isLoading = false;
+        post = postsTask.Result;
+        user = usersTask.Result;
+
+    }
+}
