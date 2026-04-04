@@ -5,4 +5,4 @@ Basically the API includes data like 100 posts,	500 comments,	100 albums,	5000 p
 3) Each post on the 'Posts' page has a name of the user and username below to it. When clicked on to the name of the user, it opens the User Profile page where you can find personal details of it and also some list of 'Albums' and 'To-do list' of that user. 
 
 
-This App is still under-maintainance as I am trying to add some more features to it.
+This App is still under-development as I am trying to add some more features to it.
