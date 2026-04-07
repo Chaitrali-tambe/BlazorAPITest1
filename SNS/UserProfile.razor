@@ -1,8 +1,12 @@
-﻿@page "/SNS/userProfile/{UserId}"
+@page "/SNS/userProfile/{UserId}"
 @inject IHttpClientFactory ClientFactory
 @using System.Text.Json
 @using BlazorWebAppTest.Model.SNS
+@using Microsoft.AspNetCore.Components.Sections
 
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
 <style>
     .dark-image-bg {
         /*background: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);*/
@@ -18,6 +22,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        padding: 10px;
         border: 3px solid #ccc; /* Optional: adds a border */
     }
 
@@ -27,32 +32,169 @@
             object-fit: cover; /* Ensures image covers area without stretching */
         }
 </style>
-<h3>User Profile</h3>
+
+<SectionContent SectionName="PageHeading">
+    <h2 class="m-0">Profile</h2>
+</SectionContent>
+
 @if (usersProfiles != null)
 {
-    <div class="card w-100 d-flex flex-row">
-        <div class="w-25 px-3 py-5 dark-image-bg d-flex flex-column align-items-center">
-            <div class="circle-wrapper" style="width: 120px;height: 120px;">
-                <img src="/images/images.png" />
+    <div class="d-flex justify-content-between">
+        <div class="card d-flex flex-column" style="width:35% !important">
+            <div class="w-100 px-3 py-5 dark-image-bg d-flex flex-column align-items-center">
+                <div class="circle-wrapper" style="width: 120px;height: 120px;">
+                    <img src="@usersProfiles.image" />
+                </div>
+                <div class="mt-2">@usersProfiles.firstName @usersProfiles.lastName</div>
+                <div class="mt-2">@@@usersProfiles.username</div>
+                @if (usersProfiles.role?.ToString() == "admin")
+                {
+                    <div class="mt-2 text-white" style="font-size: 25px">⬢ ⬢ ⬢ ⬢ ⬢</div>
+                }
+                else if (usersProfiles.role?.ToString() == "manager")
+                {
+                    <div class="mt-2 text-white" style="font-size: 25px">⬢ ⬢ ⬢ ⬢ ⬡</div>
+                }
+                else if (usersProfiles.role?.ToString() == "moderator")
+                {
+                    <div class="mt-2 text-white" style="font-size: 25px">⬢ ⬢ ⬢ ⬡ ⬡</div>
+                }
+                else if (usersProfiles.role?.ToString() == "support")
+                {
+                    <div class="mt-2 text-white" style="font-size: 25px">⬢ ⬢ ⬡ ⬡ ⬡</div>
+                }
+                else
+                {
+                    <div class="mt-2 text-white" style="font-size: 25px">⬢ ⬡ ⬡ ⬡ ⬡</div>
+                }
             </div>
-            <div class="mt-2">@usersProfiles.firstName @usersProfiles.lastName</div>
-            <div class="mt-2">@@@usersProfiles.username</div>
+            <div class="w-100 p-3 d-flex align-items-center">
+                <div class="w-100">
+                    @* <h2 class="mt-2"><span>@usersProfiles.Company?.companyname</span></h2> *@
+
+                    @* <h4 class="mt-2"><span>@usersProfiles.Company.catchPhrase</span></h4> *@
+                    @* <h6 class="mt-2 mb-4"><span>@usersProfiles.Company.bs</span></h6> *@
+                    @* <div class="mt-2"><span class="fw-bold"> Email:</span>  <span>@usersProfiles.email</span></div> *@
+                    <div class="mt-2 d-flex justify-content-between"><span class="fw-bold text-secondary"> Phone no</span>  <span class="text-secondary">@usersProfiles.phone</span></div>
+                    <hr class="border border-1 opacity-75">
+
+                    @*  <div class="mt-2 d-flex justify-content-between"><span class="fw-bold text-secondary"> Email id</span>  <span class="text-secondary" style="width: 200px;">@usersProfiles.email</span></div>
+                <hr class="border border-1 opacity-75"> *@
+                    <div class="mt-2 d-flex justify-content-between"><span class="fw-bold text-secondary"> Gender</span>  <span class="text-secondary">@usersProfiles.gender</span></div>
+                    <hr class="border border-1 opacity-75">
+
+                    <div class="mt-2 d-flex justify-content-between"><span class="fw-bold text-secondary"> Blood Group</span>  <span class="text-secondary">@usersProfiles.bloodGroup</span></div>
+                    @* <hr class="border border-1 opacity-75"> *@
+
+                    @* <div class="mt-2 d-flex justify-content-between"><span class="fw-bold text-secondary"> Birthdate</span>  <span class="text-secondary">@usersProfiles.birthDate</span></div> *@
+                    @* <div class="mt-2"><span class="fw-bold"> Age:</span>  <span>@usersProfiles.age</span></div> *@
+                    @* <div class="mt-2"><span class="fw-bold"> Birthdate:</span>  <span>@usersProfiles.birthDate</span></div> *@
+                    @* <div class="mt-2"><span class="fw-bold"> Role:</span>  <span>@usersProfiles.role</span></div> *@
+                    @* <div class="mt-2"><span class="fw-bold"> Residential Address:</span>  <span>@usersProfiles.Address.suite @usersProfiles.Address.street @usersProfiles.Address.city @usersProfiles.Address.zipcode </span></div> *@
+
+                </div>
+
+            </div>
         </div>
-        <div class="w-75 p-3 d-flex align-items-center">
-            <div>
-                <h2 class="mt-2"><span>@usersProfiles.Company?.companyname</span></h2>
 
-                @* <h4 class="mt-2"><span>@usersProfiles.Company.catchPhrase</span></h4> *@
-                @* <h6 class="mt-2 mb-4"><span>@usersProfiles.Company.bs</span></h6> *@
-                @* <div class="mt-2"><span class="fw-bold"> Email:</span>  <span>@usersProfiles.email</span></div> *@
-                @* <div class="mt-2"><span class="fw-bold"> Phone no.:</span>  <span>@usersProfiles.phone</span></div> *@
-                @* <div class="mt-2"><span class="fw-bold"> Website:</span>  <span>@usersProfiles.website</span></div> *@
-                @* <div class="mt-2"><span class="fw-bold"> Residential Address:</span>  <span>@usersProfiles.Address.suite @usersProfiles.Address.street @usersProfiles.Address.city @usersProfiles.Address.zipcode </span></div> *@
+        <div class="card d-flex flex-column p-3" style="width: calc(100% - 37%) !important">
 
-            </div>
+            <table>
+                <tr>
+                    <td class="py-2"><label class="fw-bold text-secondary"> Email</label> </td>
 
+                    <td class="text-secondary">@usersProfiles.email</td>
+
+                </tr>
+                
+                <tr>
+                    <td class="py-2"><label class="fw-bold text-secondary"> Residential Address</label> </td>
+
+                    <td class="text-secondary">
+                        @if (@usersProfiles.Address?.apt != null && @usersProfiles.Address?.apt.ToString() != "")
+                        {
+                            @usersProfiles.Address?.apt
+                            <span>,</span>
+                        }
+
+                        @if (@usersProfiles.Address?.street != null && @usersProfiles.Address?.street.ToString() != "")
+                        {
+                            @usersProfiles.Address?.street
+                            <span>,</span>
+                        }
+
+                        @if (@usersProfiles.Address?.city != null && @usersProfiles.Address?.city.ToString() != "")
+                        {
+                            @usersProfiles.Address?.city
+                            <span>,</span>
+                        }
+
+                        @if (@usersProfiles.Address?.state != null && @usersProfiles.Address?.state.ToString() != "")
+                        {
+                            @usersProfiles.Address?.state
+                            <span>,</span>
+                        }
+
+                        @if (@usersProfiles.Address?.postalCode != null && @usersProfiles.Address?.postalCode.ToString() != "")
+                        {
+                            @usersProfiles.Address?.postalCode
+                        }
+
+                     
+                    </td>
+
+                </tr>
+                <tr>
+                    <td class="py-2"><label class="fw-bold text-secondary"> Country</label> </td>
+
+                    <td class="text-secondary">@usersProfiles.country</td>
+
+                </tr>
+                <tr>
+                    <td class="py-2"><label class="fw-bold text-secondary"> Date of Birth</label> </td>
+
+                    <td class="text-secondary">@usersProfiles.birthDate</td>
+
+                </tr>
+                <tr>
+                    <td class="py-2"><label class="fw-bold text-secondary"> Age</label> </td>
+
+                    <td class="text-secondary">@usersProfiles.age</td>
+
+                </tr>
+                <tr colspan="2" class="py-2">
+                    <td>
+                        <h4 class ="mt-4">Edudation</h4>
+                    </td>
+                </tr>
+                <tr class="py-2">
+                    <td class="py-2"><label class="fw-bold text-secondary"> University</label> </td>
+                    <td class="text-secondary"><a href="#">@usersProfiles.university</a><i class="fa fa-external-link ms-1"></i> </td>
+                </tr>
+                <tr colspan="2" class="py-2">
+                    <td>
+                        <h4 class ="mt-4">Profession</h4>
+                    </td>
+                </tr>
+                <tr class="py-2">
+                    <td class="py-2"><label class="fw-bold text-secondary"> Job Title</label> </td>
+                    <td class="text-secondary">@usersProfiles.Company?.title</td>
+                </tr>
+                <tr class="py-2">
+                    <td class="py-2"><label class="fw-bold text-secondary"> Department</label> </td>
+                    <td class="text-secondary">@usersProfiles.Company?.department</td>
+                </tr>
+                <tr class="py-2">
+                    <td class="py-2"><label class="fw-bold text-secondary"> Company Name</label> </td>
+                    <td class="text-secondary"><a href="#">@usersProfiles.Company?.companyname</a><i class="fa fa-external-link ms-1"></i> </td>
+                </tr>
+            </table>
+
+
+            
         </div>
     </div>
+
     @* <div class=" w-100 mt-3 d-flex flex-row mb-4">
         <div class="card me-3 w-25 border border-3 p-3 d-flex align-items-center justify-content-center" style="height:400px">
             <div class="">
@@ -106,7 +248,7 @@ else
 }
 @code {
     [Parameter]
-    public string UserId{ get; set; }
+    public string? UserId { get; set; }
     private User1? usersProfiles;
     //private List<Albums>? album;
     //private List<Todo>? todo;
