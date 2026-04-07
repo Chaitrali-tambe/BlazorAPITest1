@@ -1,4 +1,4 @@
-﻿@page "/SNS/post"
+@page "/SNS/post"
 @using BlazorWebAppTest.Model
 @using Model.SNS
 @using Microsoft.AspNetCore.Components.Sections
@@ -7,6 +7,18 @@
 @inject IHttpClientFactory ClientFactory
 @inject HttpClient Http
 @using System.Linq
+
+<style>
+    .profile-thumb {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        object-position: top center;
+        border: 2px solid #ddd;
+        margin: 0px 30px 20px 0px;
+    }
+</style>
 
 <SectionContent SectionName="PageHeading">
     <h2 class="m-0">Timeline</h2>
@@ -43,15 +55,25 @@
             var username = currentUser?.username ?? "unknown";
             var userId = currentUser?.id;
             var postid = @postobj.id;
-            var fullName = $"{name1} {name2}"; 
+            var fullName = $"{name1} {name2}";
+            var image = currentUser?.image;
+
             <div class="card w-75" style="margin: 2% 0;">
                 <div class="card-body">
-                    <h6 class="card-title">
-                        <a class="text-decoration-none fw-bold text-secondary" href="/SNS/userProfile/@userId">@fullName</a>
-                    </h6>
-                    <p class="text-secondary text-opacity-50">
-                        @@@username
-                    </p>
+                    <div class="d-flex">
+                        <div>
+                            <img src="@image" alt="Profile" class="profile-thumb">
+                        </div>
+                        <div class="d-flex flex-column justify-content-center">
+                            <h6 class="card-title">
+                                <a class="text-decoration-none fw-bold text-secondary" href="/SNS/userProfile/@userId">@fullName</a>
+                            </h6>
+                            <p class="text-secondary text-opacity-50">
+                                @@@username
+                            </p>
+                        </div>
+                    </div>
+                    
                     <h5 class="card-subtitle mb-2 text-muted">@postobj.title</h5>
                     <p class="card-text">@postobj.body</p>
                     <a href="#" class="btn btn-primary me-2 disabled">Like</a>
