@@ -8,6 +8,11 @@
 @inject HttpClient Http
 @using System.Linq
 
+
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
 <style>
     .profile-thumb {
         width: 80px;
@@ -17,6 +22,7 @@
         object-position: top center;
         border: 2px solid #ddd;
         margin: 0px 30px 20px 0px;
+        padding:3%;
     }
 </style>
 
@@ -57,6 +63,9 @@
             var postid = @postobj.id;
             var fullName = $"{name1} {name2}";
             var image = currentUser?.image;
+            var likes = postobj.Reactions?.likes;
+            var dislikes = postobj.Reactions?.dislikes;
+            var views = postobj.views;
 
             <div class="card w-75" style="margin: 2% 0;">
                 <div class="card-body">
@@ -76,9 +85,13 @@
                     
                     <h5 class="card-subtitle mb-2 text-muted">@postobj.title</h5>
                     <p class="card-text">@postobj.body</p>
-                    <a href="#" class="btn btn-primary me-2 disabled">Like</a>
-                    <a href="#" class="btn btn-danger me-2 disabled">Unlike</a>
-                    <a href="/posts/@postid" class="btn btn-secondary me-2">Comments</a>
+                    <a href="#" class="btn btn-primary me-2 disabled"><i class="fa fa-thumbs-up me-1"></i><span>@likes</span></a>
+                    <a href="#" class="btn btn-danger me-2 disabled"><i class="fa fa-thumbs-down me-1"></i><span>@dislikes</span></a>
+                    <a href="/posts/@postid" class="btn btn-secondary me-2">
+                        <i class="fa fa-comments-o"></i>
+                        <span>Comments</span>
+                    </a>
+                    <a href="#" class="btn btn-success me-2 disabled"><i class="fa fa-eye me-1"></i><span>@views</span></a>
                     <a href="#" class="card-link">Report</a>
                 </div>
             </div>
