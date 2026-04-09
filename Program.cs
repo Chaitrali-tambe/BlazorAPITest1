@@ -11,6 +11,11 @@ builder.Services.AddHttpClient("JSONPlaceholder", client =>
     client.BaseAddress = new Uri("https://jsonplaceholder.typicode.com");
 });
 
+builder.Services.AddHttpClient("SNSPlaceholder", client =>
+{
+    client.BaseAddress = new Uri("https://dummyjson.com");
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
