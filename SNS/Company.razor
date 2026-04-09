@@ -1,0 +1,115 @@
+﻿@page "/SNS/company/{userId}"
+@using Model.SNS
+@using Microsoft.AspNetCore.Components.Sections
+@using System.Text.Json
+@using System.Net.Http.Json
+@inject IHttpClientFactory ClientFactory
+@inject HttpClient Http
+@using System.Linq
+@using System.Text.Json.Serialization
+
+
+<style>
+    .profile-thumb {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        object-position: top center;
+        border: 2px solid #ddd;
+        margin: 0px 30px 20px 0px;
+    }
+</style>
+
+
+
+<SectionContent SectionName="PageHeading">
+
+    <h2 class="m-0">
+        Company Co-workers
+    </h2>
+
+</SectionContent>
+
+
+@if (filteredusers != null)
+{
+
+    <div class="d-flex w-100 flex-column align-items-center justify-content-center">
+        <div><h4>People registered from this company</h4></div>
+        <div class="w-100 mt-3 d-flex flex-column mb-4">
+
+            @foreach (var userdtls in filteredusers)
+            {
+                var username = userdtls.username;
+                var fname = userdtls.firstName;
+                var Lname = userdtls.lastName;
+                var image = userdtls.image;
+
+                <div class="card me-3 w-50 border border-3 p-3 d-flex align-items-center justify-content-center" style="height:100px">
+                    <div>
+                        <img src="@image" alt="Profile" class="profile-thumb">
+                    </div>
+                    <div>
+                        <h6 class="text-secondary">@fname @Lname </h6>
+                        <p class="text-secondary opacity-50">@@@username</p>
+                    </div>
+                    
+                </div>
+            }
+
+        </div>
+    </div>
+}
+
+
+
+@code {
+    [Parameter]
+    public string? userId { get; set; }
+    private User1[]? users;
+    private User1[]? filteredusers;
+    private Company1? company;
+    //private UserResponse userResponse;
+    string compName = "Company";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var client = ClientFactory.CreateClient("SNSPlaceholder");
+        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+        //var companytask = client.GetFromJsonAsync<Company1>($"/users/{userId}/?select=company");
+        var companytask = client.GetFromJsonAsync<Company1>($"/users/{userId}/?select=company");
+
+        var userstask = client.GetFromJsonAsync<JsonDocument>("/users?limit=0");
+        await Task.WhenAll(companytask, userstask);
+        company = companytask.Result;
+        users = userstask.Result?.RootElement.GetProperty("users").Deserialize<User1[]>();
+
+
+
+        if (!string.IsNullOrEmpty(company.CompanyName))
+        {
+            filteredusers = users.Where(u => u.Company?.companyname == company.CompanyName).ToArray();
+        }
+
+        // string compName = company.CompanyName;
+        // if (!string.IsNullOrEmpty(compName))
+        // {
+        //     filteredusers = users.Where(u => u.Company?.companyname == compName).ToArray();
+        // }
+        //var usersTask = await client.GetFromJsonAsync<Company1>($"/users/filter?key=company.name&value={compName}");
+        // users = client.GetFromJsonAsync<JsonDocument>("/users?limit=0");
+    }
+
+
+    // public class UserResponse
+    // {
+    //     [JsonPropertyName("users")]
+    //     public User1[]? Userss { get; set; }
+
+    //     [JsonPropertyName("total")]
+    //     public int Total { get; set; }
+    //     // ... other properties like skip, limit if you need them
+    // }
+}
