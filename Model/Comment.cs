@@ -1,8 +1,8 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 
-namespace BlazorWebAppTest.Model
+namespace BlazorWebAppTest.Model.SNS
 {
-    public class Comment
+    public class Comment1
     {
         [JsonPropertyName("postId")]
         public int postId { get; set; }
@@ -10,13 +10,24 @@ namespace BlazorWebAppTest.Model
         [JsonPropertyName("id")]
         public int id { get; set; }
 
-        [JsonPropertyName("name")]
-        public string? name { get; set; }
-
-        [JsonPropertyName("email")]
-        public string? email { get; set; }
-
         [JsonPropertyName("body")]
         public string? body { get; set; }
+
+        [JsonPropertyName("likes")]
+        public int likes { get; set; }
+
+        [JsonPropertyName("user")]
+        public Comment1User? CommentUser { get; set; }
+
+        public int? userId => CommentUser.userId;
+
     }
+
+    public class Comment1User
+    {
+        [JsonPropertyName("id")]
+        public int? userId { get; set; }
+
+    }
+
 }
