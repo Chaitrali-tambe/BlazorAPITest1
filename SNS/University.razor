@@ -1,268 +1,118 @@
-@page "/SNS/userProfile/{UserId}"
-@inject IHttpClientFactory ClientFactory
-@using System.Text.Json
-@using BlazorWebAppTest.Model.SNS
+@page "/SNS/university/{uniName}"
+@using Model.SNS
 @using Microsoft.AspNetCore.Components.Sections
+@using System.Text.Json
+@using System.Net.Http.Json
+@inject IHttpClientFactory ClientFactory
+@inject HttpClient Http
+@using System.Linq
+@using System.Text.Json.Serialization
 
-<head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-</head>
+
 <style>
-    .dark-image-bg {
-        /*background: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);*/
-        background: linear-gradient(180deg, rgb(40 14 93) 0%, #8d415f 70%);
-        color: white;
+    .profile-thumb {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        object-position: top center;
+        border: 2px solid #ddd;
+        padding: 6%;
     }
-
-    .circle-wrapper {
-        width: 150px; /* Diameter of the circle */
-        height: 150px; /* Diameter of the circle */
-        border-radius: 50%; /* Makes it a circle */
-        overflow: hidden; /* Clips the image to the border radius */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 10px;
-        border: 3px solid #ccc; /* Optional: adds a border */
-        background-color: #f9fafb;
-    }
-
-        .circle-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Ensures image covers area without stretching */
-        }
 </style>
 
+
+
 <SectionContent SectionName="PageHeading">
-    <h2 class="m-0">Profile</h2>
+
+    <h2 class="m-0">
+        University Aluminis
+    </h2>
+
 </SectionContent>
 
-@if (usersProfiles != null)
+
+@if (filteredusers != null)
 {
-    <div class="d-flex justify-content-between">
-        <div class="card d-flex flex-column" style="width:35% !important">
-            <div class="w-100 px-3 py-5 dark-image-bg d-flex flex-column align-items-center">
-                <div class="circle-wrapper" style="width: 120px;height: 120px;">
-                    <img src="@usersProfiles.image" />
-                </div>
-                <div class="mt-2">@usersProfiles.firstName @usersProfiles.lastName</div>
-                <div class="mt-2">@@@usersProfiles.username</div>
-                @if (usersProfiles.role?.ToString() == "admin")
-                {
-                    <div class="mt-2 text-white" style="font-size: 25px">⬢ ⬢ ⬢ ⬢ ⬢</div>
-                }
-                else if (usersProfiles.role?.ToString() == "manager")
-                {
-                    <div class="mt-2 text-white" style="font-size: 25px">⬢ ⬢ ⬢ ⬢ ⬡</div>
-                }
-                else if (usersProfiles.role?.ToString() == "moderator")
-                {
-                    <div class="mt-2 text-white" style="font-size: 25px">⬢ ⬢ ⬢ ⬡ ⬡</div>
-                }
-                else if (usersProfiles.role?.ToString() == "support")
-                {
-                    <div class="mt-2 text-white" style="font-size: 25px">⬢ ⬢ ⬡ ⬡ ⬡</div>
-                }
-                else
-                {
-                    <div class="mt-2 text-white" style="font-size: 25px">⬢ ⬡ ⬡ ⬡ ⬡</div>
-                }
-            </div>
-            <div class="w-100 p-3 d-flex align-items-center">
-                <div class="w-100">
-                    @* <h2 class="mt-2"><span>@usersProfiles.Company?.companyname</span></h2> *@
 
-                    @* <h4 class="mt-2"><span>@usersProfiles.Company.catchPhrase</span></h4> *@
-                    @* <h6 class="mt-2 mb-4"><span>@usersProfiles.Company.bs</span></h6> *@
-                    @* <div class="mt-2"><span class="fw-bold"> Email:</span>  <span>@usersProfiles.email</span></div> *@
-                    <div class="mt-2 d-flex justify-content-between"><span class="fw-bold text-secondary"> Phone no</span>  <span class="text-secondary">@usersProfiles.phone</span></div>
-                    <hr class="border border-1 opacity-75">
+    <div class="d-flex w-100 flex-column align-items-center justify-content-center">
+        <div><h4></h4></div>
+        <div class="w-100 mt-3 row d-flex flex-row justify-content-center mb-4">
 
-                    @*  <div class="mt-2 d-flex justify-content-between"><span class="fw-bold text-secondary"> Email id</span>  <span class="text-secondary" style="width: 200px;">@usersProfiles.email</span></div>
-                <hr class="border border-1 opacity-75"> *@
-                    <div class="mt-2 d-flex justify-content-between"><span class="fw-bold text-secondary"> Gender</span>  <span class="text-secondary">@usersProfiles.gender</span></div>
-                    <hr class="border border-1 opacity-75">
+            @foreach (var userdtls in filteredusers)
+            {
+                var username = userdtls.username;
+                var fname = userdtls.firstName;
+                var Lname = userdtls.lastName;
+                var image = userdtls.image;
 
-                    <div class="mt-2 d-flex justify-content-between"><span class="fw-bold text-secondary"> Blood Group</span>  <span class="text-secondary">@usersProfiles.bloodGroup</span></div>
-                    @* <hr class="border border-1 opacity-75"> *@
+                <div class="card me-3 border border-3 p-3 col-lg-3 mb-2">
+                    <a href="/SNS/userProfile/@userdtls.id" class="text-decoration-none d-flex flex-row align-items-center justify-content-around" style="height:120px !important">
 
-                    @* <div class="mt-2 d-flex justify-content-between"><span class="fw-bold text-secondary"> Birthdate</span>  <span class="text-secondary">@usersProfiles.birthDate</span></div> *@
-                    @* <div class="mt-2"><span class="fw-bold"> Age:</span>  <span>@usersProfiles.age</span></div> *@
-                    @* <div class="mt-2"><span class="fw-bold"> Birthdate:</span>  <span>@usersProfiles.birthDate</span></div> *@
-                    @* <div class="mt-2"><span class="fw-bold"> Role:</span>  <span>@usersProfiles.role</span></div> *@
-                    @* <div class="mt-2"><span class="fw-bold"> Residential Address:</span>  <span>@usersProfiles.Address.suite @usersProfiles.Address.street @usersProfiles.Address.city @usersProfiles.Address.zipcode </span></div> *@
+                        <div>
+                            <img src="@image" alt="Profile" class="profile-thumb">
+                        </div>
+                        <div class="d-flex flex-column justify-content-center">
+                            <h6 class="text-secondary fw-bold">@fname @Lname </h6>
+                            <p class="text-secondary opacity-50 m-0">@@@username</p>
+                        </div>
 
+                    </a>
                 </div>
 
-            </div>
-        </div>
+            }
 
-        <div class="card d-flex flex-column p-3" style="width: calc(100% - 37%) !important">
-
-            <table>
-                <tr>
-                    <td class="py-2"><label class="fw-bold text-secondary"> Email</label> </td>
-
-                    <td class="text-secondary">@usersProfiles.email</td>
-
-                </tr>
-                
-                <tr>
-                    <td class="py-2"><label class="fw-bold text-secondary"> Residential Address</label> </td>
-
-                    <td class="text-secondary">
-                        @if (@usersProfiles.Address?.apt != null && @usersProfiles.Address?.apt.ToString() != "")
-                        {
-                            @usersProfiles.Address?.apt
-                            <span>,</span>
-                        }
-
-                        @if (@usersProfiles.Address?.street != null && @usersProfiles.Address?.street.ToString() != "")
-                        {
-                            @usersProfiles.Address?.street
-                            <span>,</span>
-                        }
-
-                        @if (@usersProfiles.Address?.city != null && @usersProfiles.Address?.city.ToString() != "")
-                        {
-                            @usersProfiles.Address?.city
-                            <span>,</span>
-                        }
-
-                        @if (@usersProfiles.Address?.state != null && @usersProfiles.Address?.state.ToString() != "")
-                        {
-                            @usersProfiles.Address?.state
-                            <span>,</span>
-                        }
-
-                        @if (@usersProfiles.Address?.postalCode != null && @usersProfiles.Address?.postalCode.ToString() != "")
-                        {
-                            @usersProfiles.Address?.postalCode
-                        }
-
-                     
-                    </td>
-
-                </tr>
-                <tr>
-                    <td class="py-2"><label class="fw-bold text-secondary"> Country</label> </td>
-
-                    <td class="text-secondary">@usersProfiles.country</td>
-
-                </tr>
-                <tr>
-                    <td class="py-2"><label class="fw-bold text-secondary"> Date of Birth</label> </td>
-
-                    <td class="text-secondary">@usersProfiles.birthDate</td>
-
-                </tr>
-                <tr>
-                    <td class="py-2"><label class="fw-bold text-secondary"> Age</label> </td>
-
-                    <td class="text-secondary">@usersProfiles.age</td>
-
-                </tr>
-                <tr colspan="2" class="py-2">
-                    <td>
-                        <h4 class ="mt-4">Edudation</h4>
-                    </td>
-                </tr>
-                <tr class="py-2">
-                    <td class="py-2"><label class="fw-bold text-secondary"> University</label> </td>
-                    <td class="text-secondary"><a href="#">@usersProfiles.university</a><i class="fa fa-external-link ms-1"></i> </td>
-                </tr>
-                <tr colspan="2" class="py-2">
-                    <td>
-                        <h4 class ="mt-4">Profession</h4>
-                    </td>
-                </tr>
-                <tr class="py-2">
-                    <td class="py-2"><label class="fw-bold text-secondary"> Job Title</label> </td>
-                    <td class="text-secondary">@usersProfiles.Company?.title</td>
-                </tr>
-                <tr class="py-2">
-                    <td class="py-2"><label class="fw-bold text-secondary"> Department</label> </td>
-                    <td class="text-secondary">@usersProfiles.Company?.department</td>
-                </tr>
-                <tr class="py-2">
-                    <td class="py-2"><label class="fw-bold text-secondary"> Company Name</label> </td>
-                    <td class="text-secondary"><a href="/SNS/company/@usersProfiles.id">@usersProfiles.Company?.companyname</a><i class="fa fa-external-link ms-1"></i> </td>
-                </tr>
-            </table>
-
-
-            
         </div>
     </div>
-
-    @* <div class=" w-100 mt-3 d-flex flex-row mb-4">
-        <div class="card me-3 w-25 border border-3 p-3 d-flex align-items-center justify-content-center" style="height:400px">
-            <div class="">
-                Todo List
-            </div>
-            <div class="d-flex flex-wrap p-2 overflow-scroll">
-                @if (album != null)
-                {
-                    foreach (var data in todo)
-                    {
-                        <div class="card m-1 w-100 p-2 d-flex flex-row justify-content-between align-items-center border border-2">
-                            <div class="me-1"> @data.title</div>
-                            <div class="ms-1"> <input type="checkbox" checked="@data.completed" /></div>
-                        </div>
-                    }
-                }
-                else
-                {
-                    <span>Not Found!</span>
-                }
-            </div>
-        </div>
-        <div class="card ms-3 w-75 border border-3" style="height:400px">
-            <div class="card-header text-center" style="background-color: rgb(139 122 172 / 70%);">
-                Albums
-            </div>
-            <div class="d-flex flex-wrap p-2 overflow-scroll">
-                @if (album != null)
-                {
-                    foreach (var data in album)
-                    {
-                        <div class="card m-1 w-100 p-2 d-flex justify-content-center align-items-center border border-2">
-                            <span class=""> @data.title</span>
-                        </div>
-                    }
-                }
-                else
-                {
-                    <span>No Post uploaded!</span>
-                }
-            </div>
-        </div>
-
-    </div> *@
 }
-else
-{
-    <div class="alert alert-danger">
-        <strong>Not Found!</strong> Seems like this user is not Registered.
-    </div>
-}
+
+
+
 @code {
     [Parameter]
-    public string? UserId { get; set; }
-    private User1? usersProfiles;
-    //private List<Albums>? album;
-    //private List<Todo>? todo;
+    public string? uniName { get; set; }
+    private User1[]? users;
+    private User1[]? filteredusers;
+    //private Company1? company;
+    //private UserResponse userResponse;
+    //string uniNameHeading = "University";
 
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
     {
         var client = ClientFactory.CreateClient("SNSPlaceholder");
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-        usersProfiles = await client.GetFromJsonAsync<User1>($"/users/{UserId}", options);
 
-        // album = await client.GetFromJsonAsync<List<Albums>>($"/albums?userId={UserId}", options);
+        //var companytask = client.GetFromJsonAsync<Company1>($"/users/{userId}/?select=company");
+        //var companytask = client.GetFromJsonAsync<Company1>($"/users/{userId}/?select=company");
 
-        // todo = await client.GetFromJsonAsync<List<Todo>>($"/todos?userId={UserId}", options);
+        var userstask = client.GetFromJsonAsync<JsonDocument>("/users?limit=0");
+        await Task.WhenAll(userstask);
+        //company = companytask.Result;
+        users = userstask.Result?.RootElement.GetProperty("users").Deserialize<User1[]>();
+        
+       
+        if (!string.IsNullOrEmpty(uniName))
+        {
+            filteredusers = users.Where(u => u.university == uniName).ToArray();
+        }
 
+        // string compName = company.CompanyName;
+        // if (!string.IsNullOrEmpty(compName))
+        // {
+        //     filteredusers = users.Where(u => u.Company?.companyname == compName).ToArray();
+        // }
+        //var usersTask = await client.GetFromJsonAsync<Company1>($"/users/filter?key=company.name&value={compName}");
+        // users = client.GetFromJsonAsync<JsonDocument>("/users?limit=0");
     }
+
+
+    // public class UserResponse
+    // {
+    //     [JsonPropertyName("users")]
+    //     public User1[]? Userss { get; set; }
+
+    //     [JsonPropertyName("total")]
+    //     public int Total { get; set; }
+    //     // ... other properties like skip, limit if you need them
+    // }
 }
