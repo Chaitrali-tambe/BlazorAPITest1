@@ -30,6 +30,12 @@
         margin: 0px 30px 20px 0px;
         padding: 3%;
     }
+
+
+    .btn:focus, .btn:active {
+        outline: none !important;
+        box-shadow: none !important;
+    }
 </style>
 
 <SectionContent SectionName="PageHeading">
@@ -91,7 +97,7 @@
                             </div>
                         </div>
                         <div class="dropdown">
-                            <button style="font-size:24px" class="btn" @onclick="() => ToggleMenu(postobj.id)">
+                            <button style="font-size:24px" class="btn btn-no-hover" @onclick="() => ToggleMenu(postobj.id)">
                                 &#8942;
                             </button>
                             @if (_openItemId == @postobj.id)
@@ -134,7 +140,7 @@
     private Post1[]? post;
     private User1[]? user;
     private bool isLoading = true;
-    private int? _openItemId;
+    private int? _openItemId = null;
     private void ToggleMenu(int itemId)
     {
         _openItemId = (_openItemId == itemId) ? null : itemId;
