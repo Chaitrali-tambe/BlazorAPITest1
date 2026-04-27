@@ -9,6 +9,6 @@ I've demonstrated to fetch the data using a sample rest API from [JSON Placehold
 3. Each post on the __*Posts*__ page has a name of the user and username below to it. When clicked on to the name of the user, it opens the User Profile page where you can find personal details of it and also some list of __*Albums*__ and __*To-do list*__ of that user. 
 
 ### MENU *'SNS'*
-Additionally, creating pages for same purpose but with additional data. For that I am using [Dummy JSON](https://dummyjson.com), a sample API with more data. The API includes data like 100 posts,	500 comments,	100 albums,	5000 photos,	200 todos(tasks),	10 users. Tried to fetch these data and display it on my web app.
+Additionally, creating pages for same purpose but with additional data. For that I am using [Dummy JSON](https://dummyjson.com), a sample API with more data. The API includes data like 100 posts,	500 comments,	100 albums,	5000 photos, total 200 todos(tasks),	10 users. Tried to fetch these data and display it on my web app.
 
 This App is still under-development as I am trying to add some more features to it.
