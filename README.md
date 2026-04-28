@@ -1,6 +1,9 @@
 # Blazor Server Application using Sample API Data to view through application
 Demonstrating, Blazor Server Application using .NET 8 and Bootstrap for UI and basic working for practice.
 
+## 🚧 Status: Work in Progress
+This project is currently being developed and is not yet ready for production use. 
+
 ### MENU *'Posts'* 
 I've demonstrated to fetch the data using a sample rest API from [JSON Placeholder](https://jsonplaceholder.typicode.com). This is an open source API that can be used for practicing.
 
